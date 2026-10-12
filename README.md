@@ -8,6 +8,34 @@ tool that consumes KTX2. Every run produces **both** compressed formats:
 - `out/astc.ktx2` — `ASTC_4x4_SRGB_BLOCK`
 - `out/bc7.ktx2` — `BC7_SRGB_BLOCK`
 
+## Setup
+
+Two things are needed: Python with Pillow + numpy, and the KTX-Software `ktx` CLI.
+
+**1. Python deps** (Python 3.9+):
+
+```sh
+pip3 install pillow numpy
+```
+
+**2. The `ktx` CLI** (KTX-Software, used to encode/pack the KTX2 files):
+
+- **macOS** — run the bundled fetcher, which downloads KTX-Software and installs
+  `ktx` into `tools/` with no sudo (the `tools/` binaries are not committed, so do
+  this after cloning):
+
+  ```sh
+  sh tools/fetch-ktx.sh        # -> tools/ktx version: v4.4.2
+  ```
+
+- **Linux / Windows** — install KTX-Software from its
+  [releases](https://github.com/KhronosGroup/KTX-Software/releases) (`.deb`/`.rpm`/
+  `.tar.bz2` / installer). That puts `ktx` on your `PATH`; `convert.sh` uses it
+  automatically when `tools/ktx` is absent.
+
+`convert.sh` prefers `tools/ktx` and otherwise falls back to a `ktx` on `PATH`.
+See `tools/README.md` for what the fetcher does under the hood.
+
 ## Usage
 
 ```sh
@@ -52,8 +80,6 @@ sh convert.sh panorama.tif 512 1.0 0 1.0  # 512², sharpened
    generates the full mip chain (`--generate-mipmap`).
 3. **BC7** has no direct encoder in `ktx create`, so it is produced by encoding the
    same faces to UASTC and then `ktx transcode --target bc7` → `out/bc7.ktx2`.
-
-See `tools/README.md` for how the bundled `ktx` CLI was obtained.
 
 ## Verifying the output
 

@@ -19,10 +19,18 @@ SHARPEN="${5:-0}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 OUT_DIR="$SCRIPT_DIR/out"
 FACES="$OUT_DIR/faces"
-KTX="$SCRIPT_DIR/tools/ktx"
 mkdir -p "$FACES"
 
-[ -x "$KTX" ] || { echo "error: $KTX not found. See tools/README.md." >&2; exit 1; }
+# Prefer the bundled ktx in tools/, otherwise fall back to one on PATH.
+if [ -x "$SCRIPT_DIR/tools/ktx" ]; then
+  KTX="$SCRIPT_DIR/tools/ktx"
+elif command -v ktx >/dev/null 2>&1; then
+  KTX="ktx"
+else
+  echo "error: ktx CLI not found. Run 'sh tools/fetch-ktx.sh' (macOS) or install" \
+       "KTX-Software so 'ktx' is on PATH. See tools/README.md." >&2
+  exit 1
+fi
 
 echo ">> rendering cube faces from $IN"
 python3 -I "$SCRIPT_DIR/equirect_to_faces.py" "$IN" "$FACES" \
