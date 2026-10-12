@@ -1,0 +1,10 @@
+# Generated output
+out/
+
+# Extracted third-party KTX-Software binaries (see tools/README.md to obtain)
+tools/ktx
+tools/toktx
+tools/*.dylib
+
+# macOS
+.DS_Store
